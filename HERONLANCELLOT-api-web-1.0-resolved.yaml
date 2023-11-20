@@ -1,0 +1,1101 @@
+---
+openapi: 3.1.0
+info:
+  version: "1.0"
+  title: Registro de informacoes sobre eventos
+  description: Api para facilitar o registro pelos organizadores das informações sobre o evento
+paths:
+  /activities/{activityId}/favorite:
+    post:
+      tags:
+      - User
+      description: Add activity to favorites
+      parameters:
+      - in: path
+        name: activityId
+        required: true
+        description: The id of the activity
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - Activity favorited successfully
+        "404":
+          description: Activity not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "ActivityNotFound: The activity could not be found"
+        "500":
+          description: Server error
+  /users:
+    get:
+      tags:
+      - User
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - "ALLUsers: Fetched All Users"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      login:
+                        type: string
+                      email:
+                        type: string
+                      password:
+                        type: string
+                      name:
+                        type: string
+                      affiliation:
+                        type: string
+        "404":
+          description: Users not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "UsersNotFound: The Users could not be found"
+    post:
+      tags:
+      - User
+      operationId: registerUser
+      responses:
+        "201":
+          description: Created Usuario with success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "UserCreated: The Users was successfully created"
+        "400":
+          description: Bad Request Favor corrigir a requisição
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                login:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+                affiliation:
+                  type: string
+  /user/authorized/{id}:
+    post:
+      tags:
+      - User
+      operationId: setUserEditionOrganizer
+      responses:
+        "201":
+          description: Setted user with organizer successfully
+        "400":
+          description: Bad Request Favor corrigir a requisição
+  /chamada:
+    get:
+      tags:
+      - Chamada
+      responses:
+        "200":
+          description: response
+  /inscricoes:
+    get:
+      tags:
+      - Inscricoes
+      responses:
+        "200":
+          description: response
+  /organizacao:
+    get:
+      tags:
+      - Organizacao
+      responses:
+        "200":
+          description: response
+  /{event}/{year}:
+    get:
+      tags:
+      - Event
+      operationId: getEventByYear
+      parameters:
+      - name: event
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: year
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+          maximum: 100
+      responses:
+        "200":
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  number:
+                    type: integer
+                    format: int64
+                  year:
+                    type: integer
+                    format: int64
+                  initialDate:
+                    type: string
+                    format: date
+                  finalDate:
+                    type: string
+                    format: date
+                  city:
+                    type: string
+  /event:
+    post:
+      tags:
+      - Administrador
+      operationId: registerEvent
+      responses:
+        "200":
+          description: response
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                name:
+                  type: string
+                acronym:
+                  type: string
+                description:
+                  type: string
+    put:
+      tags:
+      - Administrador
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: The id of the Event
+        schema:
+          type: integer
+          examples:
+          - Updated Activity with id 4
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                name:
+                  type: string
+                acronym:
+                  type: string
+                description:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - "SpaceUpdated: Space was successfully updated"
+                  error:
+                    type: string
+                    examples:
+                    - "SpaceUpdated: Space was unsuccessfully updated"
+        "404":
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "ActivityNotFound: The activity could not be found"
+        "500":
+          description: Server error
+    delete:
+      tags:
+      - Administrador
+      description: Delete Event
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: The id of the Event
+        schema:
+          type: integer
+          examples:
+          - ID = 4
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - "EventDeleted: The Event has been deleted successfully"
+        "404":
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "EventNotFound: The event could not be found"
+        "500":
+          description: Server error
+  /edition:
+    post:
+      tags:
+      - Administrador
+      operationId: registerEdition
+      responses:
+        "200":
+          description: response
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                number:
+                  type: integer
+                  format: int64
+                year:
+                  type: integer
+                  format: int64
+                initialDate:
+                  type: string
+                  format: date
+                finalDate:
+                  type: string
+                  format: date
+                city:
+                  type: string
+    put:
+      tags:
+      - Administrador
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: The id of the Edition
+        schema:
+          type: integer
+          examples:
+          - Updated Activity with id 4
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                number:
+                  type: integer
+                  format: int64
+                year:
+                  type: integer
+                  format: int64
+                initialDate:
+                  type: string
+                  format: date
+                finalDate:
+                  type: string
+                  format: date
+                city:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - "EditionUpdated: Edition was successfully updated"
+                  error:
+                    type: string
+                    examples:
+                    - "EditionUpdated: Edition was unsuccessfully updated"
+        "404":
+          description: Edition not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "EditionNotFound: The Event Edition could not be found"
+        "500":
+          description: Server error
+    delete:
+      tags:
+      - Administrador
+      description: Delete Edition
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: The id of the Edition
+        schema:
+          type: integer
+          examples:
+          - ID = 4
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - "EventDeleted: The Event has been deleted successfully"
+        "404":
+          description: Edition not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "EditionNotFound: The Event Edition could not be found"
+        "500":
+          description: Server error
+  /activities:
+    post:
+      tags:
+      - Organizador
+      operationId: createActivities
+      responses:
+        "200":
+          description: Activity Created successfully
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                nome:
+                  type: string
+                tipo:
+                  type: string
+                  enum:
+                  - asc
+                  - desc
+                descricao:
+                  type: string
+                data:
+                  type: string
+                  format: date
+                horarioInicial:
+                  type: string
+                horarioFinal:
+                  type: string
+    get:
+      tags:
+      - Organizador
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - "AllActivities: Fetched All AllActivities"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      nome:
+                        type: string
+                      tipo:
+                        type: string
+                        enum:
+                        - asc
+                        - desc
+                      descricao:
+                        type: string
+                      data:
+                        type: string
+                        format: date
+                      horarioInicial:
+                        type: string
+                      horarioFinal:
+                        type: string
+        "404":
+          description: Activity not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "ActivityNotFound: The activity could not be found"
+    put:
+      tags:
+      - Organizador
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: The id of the Activity
+        schema:
+          type: integer
+          examples:
+          - Updated Activity with id 4
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                nome:
+                  type: string
+                tipo:
+                  type: string
+                  enum:
+                  - asc
+                  - desc
+                descricao:
+                  type: string
+                data:
+                  type: string
+                  format: date
+                horarioInicial:
+                  type: string
+                horarioFinal:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - "SpaceUpdated: Space was successfully updated"
+                  error:
+                    type: string
+                    examples:
+                    - "SpaceUpdated: Space was unsuccessfully updated"
+        "404":
+          description: Space not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "ActivityNotFound: The activity could not be found"
+        "500":
+          description: Server error
+  /space:
+    get:
+      tags:
+      - Organizador
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - "AllSpaces: Fetched All AllSpaces"
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        format: int64
+                      name:
+                        type: string
+                      location:
+                        type: string
+                      capacity:
+                        type: integer
+                        format: int64
+                      resources:
+                        type: string
+        "404":
+          description: Space not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "SpaceNotFound: The space could not be found"
+    post:
+      tags:
+      - Organizador
+      operationId: createSpace
+      responses:
+        "200":
+          description: Space Created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "SpaceCreated: Space was successfully created"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                name:
+                  type: string
+                location:
+                  type: string
+                capacity:
+                  type: integer
+                  format: int64
+                resources:
+                  type: string
+    put:
+      tags:
+      - Organizador
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: The id of the Space
+        schema:
+          type: integer
+          examples:
+          - Updated Space with id 4
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  format: int64
+                name:
+                  type: string
+                location:
+                  type: string
+                capacity:
+                  type: integer
+                  format: int64
+                resources:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - "SpaceUpdated: Space was successfully updated"
+                  error:
+                    type: string
+                    examples:
+                    - "SpaceUpdated: Space was unsuccessfully updated"
+        "404":
+          description: Space not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "SpaceNotFound: The space could not be found"
+        "500":
+          description: Server error
+    delete:
+      tags:
+      - Organizador
+      description: Delete Space
+      parameters:
+      - in: path
+        name: id
+        required: true
+        description: The id of the space
+        schema:
+          type: integer
+          examples:
+          - ID = 4
+      responses:
+        "200":
+          description: Ok
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    examples:
+                    - "EventDeleted: The Event has been deleted successfully"
+        "404":
+          description: Space not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        examples:
+                        - "EventNotFound: The event could not be found"
+        "500":
+          description: Server error
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        login:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        affiliation:
+          type: string
+    UserNotFound:
+      type: object
+      properties:
+        errors:
+          type: object
+          properties:
+            message:
+              type: string
+              examples:
+              - "UsersNotFound: The Users could not be found"
+    UserCreated:
+      type: object
+      properties:
+        message:
+          type: object
+          properties:
+            message:
+              type: string
+              examples:
+              - "UserCreated: The Users was successfully created"
+    AllUsers:
+      type: object
+      properties:
+        message:
+          type: string
+          examples:
+          - "ALLUsers: Fetched All Users"
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            login:
+              type: string
+            email:
+              type: string
+            password:
+              type: string
+            name:
+              type: string
+            affiliation:
+              type: string
+    EditionNotFound:
+      type: object
+      properties:
+        errors:
+          type: object
+          properties:
+            message:
+              type: string
+              examples:
+              - "EditionNotFound: The Event Edition could not be found"
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        acronym:
+          type: string
+        description:
+          type: string
+    Edition:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        number:
+          type: integer
+          format: int64
+        year:
+          type: integer
+          format: int64
+        initialDate:
+          type: string
+          format: date
+        finalDate:
+          type: string
+          format: date
+        city:
+          type: string
+    Activities:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        nome:
+          type: string
+        tipo:
+          type: string
+          enum:
+          - asc
+          - desc
+        descricao:
+          type: string
+        data:
+          type: string
+          format: date
+        horarioInicial:
+          type: string
+        horarioFinal:
+          type: string
+    AllActivities:
+      type: object
+      properties:
+        message:
+          type: string
+          examples:
+          - "AllActivities: Fetched All AllActivities"
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            nome:
+              type: string
+            tipo:
+              type: string
+              enum:
+              - asc
+              - desc
+            descricao:
+              type: string
+            data:
+              type: string
+              format: date
+            horarioInicial:
+              type: string
+            horarioFinal:
+              type: string
+    ActivityNotFound:
+      type: object
+      properties:
+        errors:
+          type: object
+          properties:
+            message:
+              type: string
+              examples:
+              - "ActivityNotFound: The activity could not be found"
+    ActivityUpdated:
+      type: object
+      properties:
+        message:
+          type: string
+          examples:
+          - "SpaceUpdated: Space was successfully updated"
+        error:
+          type: string
+          examples:
+          - "SpaceUpdated: Space was unsuccessfully updated"
+    EditionUpdated:
+      type: object
+      properties:
+        message:
+          type: string
+          examples:
+          - "EditionUpdated: Edition was successfully updated"
+        error:
+          type: string
+          examples:
+          - "EditionUpdated: Edition was unsuccessfully updated"
+    Space:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        location:
+          type: string
+        capacity:
+          type: integer
+          format: int64
+        resources:
+          type: string
+    SpaceCreated:
+      type: object
+      properties:
+        message:
+          type: object
+          properties:
+            message:
+              type: string
+              examples:
+              - "SpaceCreated: Space was successfully created"
+    AllSpaces:
+      type: object
+      properties:
+        message:
+          type: string
+          examples:
+          - "AllSpaces: Fetched All AllSpaces"
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            name:
+              type: string
+            location:
+              type: string
+            capacity:
+              type: integer
+              format: int64
+            resources:
+              type: string
+    SpaceUpdated:
+      type: object
+      properties:
+        message:
+          type: string
+          examples:
+          - "SpaceUpdated: Space was successfully updated"
+        error:
+          type: string
+          examples:
+          - "SpaceUpdated: Space was unsuccessfully updated"
+    SpaceDeleted:
+      type: object
+      properties:
+        message:
+          type: string
+          examples:
+          - "SpaceDeleted: The space has been deleted successfully"
+    EventDeleted:
+      type: object
+      properties:
+        message:
+          type: string
+          examples:
+          - "EventDeleted: The Event has been deleted successfully"
+    EditionDeleted:
+      type: object
+      properties:
+        message:
+          type: string
+          examples:
+          - "EditionDeleted: Edition has been deleted successfully"
+    EventNotFound:
+      type: object
+      properties:
+        errors:
+          type: object
+          properties:
+            message:
+              type: string
+              examples:
+              - "EventNotFound: The event could not be found"
+    SpaceNotFound:
+      type: object
+      properties:
+        errors:
+          type: object
+          properties:
+            message:
+              type: string
+              examples:
+              - "SpaceNotFound: The space could not be found"
+    FavoriteResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          examples:
+          - Activity favorited successfully
